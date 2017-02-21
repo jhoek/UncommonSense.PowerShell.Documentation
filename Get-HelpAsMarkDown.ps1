@@ -141,16 +141,19 @@ function Get-HelpAsMarkDown
             }
 
             # Parameters
-            Write-Output '### Parameters'
-            foreach($Parameter in $HelpInfo.Parameters.Parameter)
+            if ($HelpInfo.Parameters)
             {
-                $ParameterText = $Parameter | Out-String -Width 1200
-                #Write-Debug $ParameterText
-                $ParameterText = $ParameterText -replace '^\s*-', '#### '
-                $ParameterText = $ParameterText.Trim()
-                $ParameterText = [System.Web.HttpUtility]::HtmlEncode($ParameterText)
+                Write-Output '### Parameters'
+                foreach($Parameter in $HelpInfo.Parameters.Parameter)
+                {
+                    $ParameterText = $Parameter | Out-String -Width 1200
+                    #Write-Debug $ParameterText
+                    $ParameterText = $ParameterText -replace '^\s*-', '#### '
+                    $ParameterText = $ParameterText.Trim()
+                    $ParameterText = [System.Web.HttpUtility]::HtmlEncode($ParameterText)
 
-                Write-Output $($ParameterText)
+                    Write-Output $($ParameterText)
+                }
             }
 
             # Examples
