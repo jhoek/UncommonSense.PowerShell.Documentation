@@ -1,11 +1,15 @@
 ﻿<a name="Get-HelpAsMarkDown"></a>
 ## Get-HelpAsMarkDown
 ### Synopsis
-Formats PowerShell cmdlet help as MarkDown
+Formats cmdlet help as MarkDown
 ### Syntax
 ```powershell
 Get-HelpAsMarkDown [-Commands] <Object> [[-Title] <string>] [[-Description] <string>] [[-PrefacePath] <string>] [[-PostfacePath] <string>] [<CommonParameters>]
 ```
+### Output Type(s)
+
+- @{type=@{name=System.String[]}}.Name
+
 ### Parameters
 #### Commands &lt;Object&gt;
     The command or commands to include in the MarkDown file
@@ -54,4 +58,4 @@ Get-Command -Module IDYN.NAV.Automation | Sort-Object -Property Verb | Get-HelpA
 
 ```
 Documents module IDYN.NAV.Automation, sorts the functions by verb name, adds a module title and description and copies the resulting text to the clipboard
-<div style='font-size:small; color: #ccc'>Generated 21-02-2017 19:54</div>
+<div style='font-size:small; color: #ccc'>Generated 21-02-2017 20:27</div>
