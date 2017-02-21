@@ -8,6 +8,7 @@ Documents module IDYN.NAV.Automation, sorts the functions by verb name, adds a m
 function Get-HelpAsMarkDown
 {
     [CmdletBinding()]
+    [OutputType([string[]])]
     Param
     (
         # The command or commands to include in the MarkDown file
