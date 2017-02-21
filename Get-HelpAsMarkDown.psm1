@@ -112,7 +112,7 @@ function Get-HelpAsMarkDown
             Write-Output ($HelpInfo.Synopsis | Out-String -Width 1200).Trim()
 
             # Description
-            if ('Description' -in $HelpInfo.PSObject.Properties.Name)
+            if ($HelpInfo.Description) 
             {
                 Write-Output '### Description'
                 Write-Output ($HelpInfo.Description | Out-String -Width 1200).Trim()
