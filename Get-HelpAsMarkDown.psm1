@@ -126,18 +126,17 @@ function Get-HelpAsMarkDown
             Write-Output ``````
 
             # Output Types
-            if ($HelpInfo.ReturnValues)
+            if ($Command.OutputType)
             {
                 Write-Output '### Output Type(s)'
                 Write-Output ''
 
-                foreach($ReturnValue in $HelpInfo.ReturnValues.ReturnValue)
+                foreach($OutputType in $Command.OutputType)
                 {
-                    Write-Output "- $ReturnValue.Name"
+                    Write-Output "- $($OutputType.Name)"
                 }
 
                 Write-Output ''
-                # FIXME
             }
 
             # Parameters
