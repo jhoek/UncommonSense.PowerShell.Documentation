@@ -1,4 +1,15 @@
-﻿<a name="Get-HelpAsMarkDown"></a>
+# Get-HelpAsMarkDown
+
+PowerShell module for converting PowerShell help information to MarkDown
+
+## Design Considerations
+
+<dl>
+    <dt>Why not use a custom formatting file instead?</dt>
+    <dd>I agree that most of what Get-HelpAsMarkDown does could also be done using a formatting file, except for including a preface and postface.</dd>
+</dl>
+
+<a name="Get-HelpAsMarkDown"></a>
 ## Get-HelpAsMarkDown
 ### Synopsis
 Formats cmdlet help as MarkDown
@@ -8,7 +19,7 @@ Get-HelpAsMarkDown [-Commands] <Object> [[-Title] <string>] [[-Description] <str
 ```
 ### Output Type(s)
 
-- @{type=@{name=System.String[]}}.Name
+- System.String[]
 
 ### Parameters
 #### Commands &lt;Object&gt;
@@ -56,6 +67,7 @@ Get-HelpAsMarkDown [-Commands] <Object> [[-Title] <string>] [[-Description] <str
 ```powershell
 Get-Command -Module IDYN.NAV.Automation | Sort-Object -Property Verb | Get-HelpAsMarkDown -Title IDYN.NAV.Automation -Description 'PowerShell cmdlets for IDYN developers.' | clip
 
-```
+```
+
 Documents module IDYN.NAV.Automation, sorts the functions by verb name, adds a module title and description and copies the resulting text to the clipboard
-<div style='font-size:small; color: #ccc'>Generated 21-02-2017 20:27</div>
+<div style='font-size:small; color: #ccc'>Generated 02-12-2017 10:55</div>
