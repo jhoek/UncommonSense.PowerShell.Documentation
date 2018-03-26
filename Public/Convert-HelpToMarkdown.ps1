@@ -2,17 +2,16 @@
 .Synopsis
 Formats cmdlet help as MarkDown
 .Example
-Get-Command -Module IDYN.NAV.Automation | Sort-Object -Property Verb | Get-HelpAsMarkDown -Title IDYN.NAV.Automation -Description 'PowerShell cmdlets for IDYN developers.' | clip
+Get-Command -Module IDYN.NAV.Automation | Sort-Object -Property Verb | Convert-HelpToMarkDown -Title IDYN.NAV.Automation -Description 'PowerShell cmdlets for IDYN developers.' | clip
 Documents module IDYN.NAV.Automation, sorts the functions by verb name, adds a module title and description and copies the resulting text to the clipboard
 #>
-function Get-HelpAsMarkDown
+function Convert-HelpToMarkDown
 {
-    [CmdletBinding()]
     [OutputType([string[]])]
     Param
     (
         # The command or commands to include in the MarkDown file
-        [Parameter(Mandatory,ValueFromPipeLine)]
+        [Parameter(Mandatory, ValueFromPipeLine)]
         $Commands,
 
         # The title for the MarkDown file
@@ -43,7 +42,7 @@ function Get-HelpAsMarkDown
     }
     Process
     {
-        foreach($Command in $Commands)
+        foreach ($Command in $Commands)
         {
             $CachedCommands += $Command
         }
@@ -80,7 +79,7 @@ function Get-HelpAsMarkDown
             Write-Output '| ------- | -------- |'
 
             $CurrentCommand = 0
-            foreach($Command in $CachedCommands)
+            foreach ($Command in $CachedCommands)
             {
                 $CurrentCommand++
                 Write-Progress -Activity $Activity -CurrentOperation 'Creating index' -PercentComplete ($CurrentCommand / $NoOfCommands * 100)
@@ -96,7 +95,7 @@ function Get-HelpAsMarkDown
         }
 
         $CurrentCommand = 0
-        foreach($Command in $CachedCommands)
+        foreach ($Command in $CachedCommands)
         {
             $CurrentCommand++
             Write-Progress -Activity $Activity -CurrentOperation $Command.Name -PercentComplete ($CurrentCommand / $NoOfCommands * 100)
@@ -131,7 +130,7 @@ function Get-HelpAsMarkDown
                 Write-Output '### Output Type(s)'
                 Write-Output ''
 
-                foreach($OutputType in $Command.OutputType)
+                foreach ($OutputType in $Command.OutputType)
                 {
                     Write-Output "- $($OutputType.Name)"
                 }
@@ -143,7 +142,7 @@ function Get-HelpAsMarkDown
             if ($HelpInfo.Parameters)
             {
                 Write-Output '### Parameters'
-                foreach($Parameter in $HelpInfo.Parameters.Parameter)
+                foreach ($Parameter in $HelpInfo.Parameters.Parameter)
                 {
                     $ParameterText = $Parameter | Out-String -Width 1200
                     #Write-Debug $ParameterText
@@ -160,7 +159,7 @@ function Get-HelpAsMarkDown
             # if ('Examples' -in $HelpInfo.PSObject.Properties.Name)
             {
                 Write-Output '### Examples'
-                foreach($Example in $HelpInfo.Examples.Example)
+                foreach ($Example in $HelpInfo.Examples.Example)
                 {
                     $ExampleTitle = $Example.Title
                     $ExampleTitle = $ExampleTitle -replace '-', ''
@@ -170,7 +169,7 @@ function Get-HelpAsMarkDown
                     Write-Output $ExampleTitle
                     Write-Output ```````powershell
                
-                    if($Example.Code)
+                    if ($Example.Code)
                     {
                         Write-Output $Example.Code
                         Write-output ''
