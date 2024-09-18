@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="pwsh -Command &quot;New-BinaryModuleManifest -Path $(TargetDir)$(TargetName).psd1 -ModulePath $(ProjectDir) -Guid f97aca57-f2ef-4335-89f1-7cb8978892e8 -Verbose&quot;" />
+        <Exec Command="pwsh -Command &quot;New-BinaryModuleManifest -Path $(TargetDir)$(TargetName).psd1 -ModulePath $(ProjectDir) -Guid 5c3d4d9c-cf3b-449b-a6c6-e2ab20882539 -Verbose&quot;" />
+        <Exec Command="pwsh -Command &quot;Update-ModuleManifest -Path $(TargetDir)$(TargetName).psd1 -Author 'Jan Hoek' -CompanyName 'uncommonsense.nl' -Copyright '(c) Jan Hoek. All rights reserved.' -Description 'PowerShell module for converting PowerShell help information to MarkDown' -Tags 'powershell', 'documentation', 'help', 'markdown' -LicenseUri 'https://github.com/jhoek/UncommonSense.PowerShell.Documentation/blob/master/LICENSE.md' -ProjectUri 'https://github.com/jhoek/UncommonSense.PowerShell.Documentation' &quot;"/>
     </Target>
 </Project>

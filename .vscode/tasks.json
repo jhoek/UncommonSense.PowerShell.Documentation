@@ -2,6 +2,17 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "test",
+            "command":"pwsh",
+            "type": "shell",
+            "args": ["-File" , "test.ps1"],
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
             "label": "build",
             "command": "dotnet",
             "type": "process",
