@@ -45,11 +45,16 @@ public class ExportModuleDocumentationCmdlet : PSCmdlet
     [Parameter(Mandatory = true, ParameterSetName = ParameterSets.FromMethodsToFile)]
     public string PassThru { get; set; }
 
-    protected List<PSModuleInfo> ModuleInfoCache = new List<PSModuleInfo>();
-    protected List<CommandInfo> CommandInfoCache = new List<CommandInfo>();
+    protected Dictionary<PSModuleInfo, List<CommandInfo>> ModuleInfoCache = new Dictionary<PSModuleInfo, List<CommandInfo>>();
 
     protected override void ProcessRecord()
     {
+        switch (ParameterSetName)
+        {
+            case ParameterSets.FromMethodsToFile, ParameterSets.FromMethodsToText:
+
+        }
+
         ModuleInfoCache.AddRange(Module ?? Array.Empty<PSModuleInfo>());
         CommandInfoCache.AddRange(Command ?? Array.Empty<CommandInfo>());
     }
