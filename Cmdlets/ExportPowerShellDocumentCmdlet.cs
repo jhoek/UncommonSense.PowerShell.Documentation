@@ -4,6 +4,7 @@ namespace UncommonSense.PowerShell.Documentation;
 
 public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 {
+    // FIXME: Maml Documentation attributes
     // FIXME:
     // [Parameter()]
     // public string Preface { get; set; }
@@ -11,19 +12,25 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
     // [Parameter()]
     // public string Postface { get; set; }
 
+    [Parameter()]
+    public SwitchParameter OmitIndex { get; set; }
+
     protected Action<string> WriteLine { get; set; }
 
     protected void WriteModuleInfo(string title, string description)
     {
         WriteLine.Invoke($"# {title}");
         WriteLine.Invoke("");
-        WriteLine.Invoke($"## {description}");
+        WriteLine.Invoke($"## Description");
+        WriteLine.Invoke("");
+        WriteLine.Invoke(description);
         WriteLine.Invoke("");
     }
 
     protected void WriteCommandInfo(CommandInfo commandInfo)
     {
-        WriteLine.Invoke(commandInfo.Name);
+        WriteLine.Invoke($"<a name='{commandInfo.Name}'></a>");
+        WriteLine.Invoke($"## {commandInfo.Name}");
         WriteLine.Invoke("");
     }
 
@@ -54,23 +61,35 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
 
     protected override void BeginProcessing()
     {
-        Directory = GetUnresolvedProviderPathFromPSPath(Directory);
+        if (ParameterSetName == ParameterSet.ToDisk)
+            Directory = GetUnresolvedProviderPathFromPSPath(Directory);
     }
 
     protected override void ProcessRecord() => Module.ToList().ForEach(m => ProcessModule(m));
 
     protected void ProcessModule(PSModuleInfo module)
     {
-        var fileName = Path.Combine(Directory, module.Name);
+        StreamWriter streamWriter = null;
 
-        using var streamWriter = new StreamWriter(fileName);
-        WriteLine = streamWriter.WriteLine;
+        switch (ParameterSetName)
+        {
+            case ParameterSet.ToDisk:
+                var fileName = Path.Combine(Directory, module.Name);
+                streamWriter = new StreamWriter(fileName);
+                WriteLine = streamWriter.WriteLine;
+                break;
+
+            case ParameterSet.ToOutputStream:
+                WriteLine = WriteObject;
+                break;
+        }
 
         WriteModuleInfo(module.Name, module.Description);
         module.ExportedCmdlets.Values.ToList().ForEach(WriteCommandInfo);
         WriteFooter();
 
-        streamWriter.Close();
+        if (ParameterSetName == ParameterSet.ToDisk)
+            streamWriter.Close();
     }
 }
 
@@ -94,10 +113,18 @@ public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdl
 
     protected override void BeginProcessing()
     {
-        Path = GetUnresolvedProviderPathFromPSPath(Path);
+        switch (ParameterSetName)
+        {
+            case ParameterSet.ToDisk:
+                Path = GetUnresolvedProviderPathFromPSPath(Path);
+                streamWriter = new StreamWriter(Path);
+                WriteLine = streamWriter.WriteLine;
+                break;
 
-        streamWriter = new StreamWriter(Path);
-        WriteLine = streamWriter.WriteLine;
+            case ParameterSet.ToOutputStream:
+                WriteLine = WriteObject;
+                break;
+        }
 
         WriteModuleInfo(Title, Description);
     }
@@ -111,6 +138,7 @@ public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdl
     {
         WriteFooter();
 
-        streamWriter.Close();
+        if (ParameterSetName == ParameterSet.ToDisk)
+            streamWriter.Close();
     }
 }

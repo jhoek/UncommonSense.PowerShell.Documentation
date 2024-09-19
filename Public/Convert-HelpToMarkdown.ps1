@@ -1,11 +1,4 @@
-﻿<#
-.Synopsis
-Formats cmdlet help as MarkDown
-.Example
-Get-Command -Module IDYN.NAV.Automation | Sort-Object -Property Verb | Convert-HelpToMarkDown -Title IDYN.NAV.Automation -Description 'PowerShell cmdlets for IDYN developers.' | clip
-Documents module IDYN.NAV.Automation, sorts the functions by verb name, adds a module title and description and copies the resulting text to the clipboard
-#>
-function Convert-HelpToMarkDown
+﻿function Convert-HelpToMarkDown
 {
     [OutputType([string[]])]
     Param
@@ -35,7 +28,7 @@ function Convert-HelpToMarkDown
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
+        # Add-Type -AssemblyName System.Web
 
         $CachedCommands = @()
         $Activity = 'Formatting help info as MarkDown'
@@ -52,12 +45,12 @@ function Convert-HelpToMarkDown
         $NoOfCommands = $CachedCommands.Length
         $IndexRequired = $CachedCommands.Length -gt 1
 
-        if ($Title)
-        {
-            Write-Output "# $Title"
-            Write-Output ''
-        }
-        
+        # if ($Title)
+        # {
+        #     Write-Output "# $Title"
+        #     Write-Output ''
+        # }
+
         if ($Description)
         {
             Write-Output $Description
@@ -74,7 +67,7 @@ function Convert-HelpToMarkDown
         {
             Write-Output '## Index'
             Write-Output ''
-            
+
             Write-Output '| Command | Synopsis |'
             Write-Output '| ------- | -------- |'
 
@@ -90,7 +83,7 @@ function Convert-HelpToMarkDown
 
                 Write-Output "| $LeftColumn | $RightColumn |"
             }
-            
+
             Write-Output ''
         }
 
@@ -101,7 +94,7 @@ function Convert-HelpToMarkDown
             Write-Progress -Activity $Activity -CurrentOperation $Command.Name -PercentComplete ($CurrentCommand / $NoOfCommands * 100)
 
             $HelpInfo = Get-Help $Command -Full
-            
+
             # Name
             Write-Output "<a name=`"$($Command.Name)`"></a>"
             Write-Output "## $($HelpInfo.Name)"
@@ -111,7 +104,7 @@ function Convert-HelpToMarkDown
             Write-Output ($HelpInfo.Synopsis | Out-String -Width 1200).Trim()
 
             # Description
-            if ($HelpInfo.Description) 
+            if ($HelpInfo.Description)
             {
                 Write-Output '### Description'
                 Write-Output ($HelpInfo.Description | Out-String -Width 1200).Trim()
@@ -155,7 +148,7 @@ function Convert-HelpToMarkDown
             }
 
             # Examples
-            if ($HelpInfo.Examples) 
+            if ($HelpInfo.Examples)
             # if ('Examples' -in $HelpInfo.PSObject.Properties.Name)
             {
                 Write-Output '### Examples'
@@ -168,11 +161,11 @@ function Convert-HelpToMarkDown
 
                     Write-Output $ExampleTitle
                     Write-Output ```````powershell
-               
+
                     if ($Example.Code)
                     {
                         Write-Output $Example.Code
-                        Write-output ''
+                        Write-Output ''
                     }
 
                     Write-Output ```````
