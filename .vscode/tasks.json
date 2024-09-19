@@ -2,27 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "test",
-            "command":"pwsh",
-            "type": "shell",
-            "args": ["-File" , "test.ps1"],
-            "problemMatcher": [],
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
-        },
-        {
             "label": "build",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "../Library/Application Support/Code/User/workspaceStorage/49f0039dbc2cb7a2c0cab9588494f574/ms-dotnettools.csdevkit/UncommonSense.PowerShell.Documentation.sln",
+                "${workspaceFolder}/UncommonSense.PowerShell.Documentation.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "publish",
@@ -30,7 +23,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "../Library/Application Support/Code/User/workspaceStorage/49f0039dbc2cb7a2c0cab9588494f574/ms-dotnettools.csdevkit/UncommonSense.PowerShell.Documentation.sln",
+                "${workspaceFolder}/UncommonSense.PowerShell.Documentation.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -44,9 +37,23 @@
                 "watch",
                 "run",
                 "--project",
-                "../Library/Application Support/Code/User/workspaceStorage/49f0039dbc2cb7a2c0cab9588494f574/ms-dotnettools.csdevkit/UncommonSense.PowerShell.Documentation.sln"
+                "${workspaceFolder}/UncommonSense.PowerShell.Documentation.sln"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "test",
+            "command": "pwsh",
+            "type": "shell",
+            "args": [
+                "-File",
+                "test.ps1"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
         }
     ]
 }
