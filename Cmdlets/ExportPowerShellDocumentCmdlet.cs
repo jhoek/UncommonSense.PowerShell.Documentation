@@ -16,7 +16,18 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
     [Parameter()]
     public SwitchParameter OmitIndex { get; set; }
 
-    protected Action<string> WriteLine { get; set; }
+    protected void WriteDocumentation(
+        string title,
+        string description,
+        IEnumerable<CommandInfo> commands,
+        Action<string> writeLine
+    )
+    {
+        // FIXME: List dependencies, installation instructions
+        // FIXME: Index if necessary and not omitted
+
+        writeLine.Invoke($"Generated {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()}");
+    }
 
     protected void WriteModuleInfo(string title, string description)
     {
@@ -33,10 +44,5 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
         WriteLine.Invoke($"<a name='{commandInfo.Name}'></a>");
         WriteLine.Invoke($"## {commandInfo.Name}");
         WriteLine.Invoke("");
-    }
-
-    protected void WriteFooter()
-    {
-        WriteLine.Invoke($"Generated {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()}");
     }
 }

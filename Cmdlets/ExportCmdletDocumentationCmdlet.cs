@@ -46,8 +46,6 @@ public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdl
 
     protected override void EndProcessing()
     {
-        WriteFooter();
-
         if (ParameterSetName == ParameterSet.ToDisk)
             StreamWriter.Close();
     }

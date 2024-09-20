@@ -4,8 +4,6 @@ namespace UncommonSense.PowerShell.Documentation;
 [Alias("Convert-HelpToMarkDown")]
 public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdlet
 {
-    // FIXME: List dependencies, installation instructions
-
     [Parameter(Mandatory = true, ValueFromPipeline = true)]
     public PSModuleInfo[] Module { get; set; }
 
@@ -13,37 +11,31 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
     [ValidateNotNullOrEmpty()]
     public string Directory { get; set; } = ".";
 
-    protected override void BeginProcessing()
-    {
-        if (ParameterSetName == ParameterSet.ToDisk)
-            Directory = GetUnresolvedProviderPathFromPSPath(Directory);
-    }
+    protected override void ProcessRecord() =>
+        Module
+            .ToList()
+            .ForEach(m =>
+            {
+                Action<string> writeLine = null;
+                StreamWriter streamWriter = null;
 
-    protected override void ProcessRecord() => Module.ToList().ForEach(m => ProcessModule(m));
+                switch (ParameterSetName)
+                {
+                    case ParameterSet.ToDisk:
+                        var directory = GetUnresolvedProviderPathFromPSPath(Directory);
+                        var fileName = Path.Combine(directory, m.Name);
+                        streamWriter = new StreamWriter(fileName);
+                        writeLine = streamWriter.WriteLine;
+                        break;
 
-    protected void ProcessModule(PSModuleInfo module)
-    {
-        StreamWriter streamWriter = null;
+                    case ParameterSet.ToOutputStream:
+                        writeLine = WriteObject;
+                        break;
+                }
 
-        switch (ParameterSetName)
-        {
-            case ParameterSet.ToDisk:
-                var fileName = Path.Combine(Directory, module.Name);
-                streamWriter = new StreamWriter(fileName);
-                WriteLine = streamWriter.WriteLine;
-                break;
+                WriteDocumentation(m.Name, m.Description, m.ExportedCmdlets.Values, writeLine);
 
-            case ParameterSet.ToOutputStream:
-                WriteLine = WriteObject;
-                break;
-        }
-
-        WriteModuleInfo(module.Name, module.Description);
-        // FIXME: Index if necessary and not omitted
-        module.ExportedCmdlets.Values.ToList().ForEach(WriteCommandInfo);
-        WriteFooter();
-
-        if (ParameterSetName == ParameterSet.ToDisk)
-            streamWriter.Close();
-    }
+                if (ParameterSetName == ParameterSet.ToDisk)
+                    streamWriter.Close();
+            });
 }
