@@ -33,7 +33,12 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
                         break;
                 }
 
-                WriteDocumentation(m.Name, m.Description, m.ExportedCmdlets.Values, writeLine);
+                WriteDocumentation(
+                    m.Name,
+                    m.Description,
+                    m.ExportedCmdlets.Values.Cast<CommandInfo>().Concat(m.ExportedFunctions.Values),
+                    writeLine
+                );
 
                 if (ParameterSetName == ParameterSet.ToDisk)
                     streamWriter.Close();

@@ -1,6 +1,7 @@
 namespace UncommonSense.PowerShell.Documentation;
 
 [Cmdlet(VerbsData.Export, Nouns.CmdletDocumentation, DefaultParameterSetName = ParameterSet.ToOutputStream)]
+[Alias("Get-HelpAsMarkDown")]
 public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdlet
 {
     [Parameter(Mandatory = true, ValueFromPipeline = true)]
@@ -13,40 +14,34 @@ public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdl
     public string Description { get; set; }
 
     [Parameter(Mandatory = true, ParameterSetName = ParameterSet.ToDisk)]
-    [ValidateNotNullOrEmpty()]
     public string Path { get; set; }
 
     protected List<CommandInfo> CachedCommands { get; } = new List<CommandInfo>();
-    protected StreamWriter StreamWriter { get; set; }
 
-    protected override void BeginProcessing()
-    {
-        switch (ParameterSetName)
-        {
-            case ParameterSet.ToDisk:
-                Path = GetUnresolvedProviderPathFromPSPath(Path);
-                StreamWriter = new StreamWriter(Path);
-                WriteLine = StreamWriter.WriteLine;
-                break;
-
-            case ParameterSet.ToOutputStream:
-                WriteLine = WriteObject;
-                break;
-        }
-
-        WriteModuleInfo(Title, Description);
-
-        // FIXME: Index if necessary and not omitted
-    }
-
-    protected override void ProcessRecord()
-    {
-        Command.ToList().ForEach(c => WriteCommandInfo(c));
-    }
+    protected override void ProcessRecord() =>
+        CachedCommands.AddRange(Command);
 
     protected override void EndProcessing()
     {
+        Action<string> writeLine = null;
+        StreamWriter streamWriter = null;
+
+        switch (ParameterSetName)
+        {
+            case ParameterSet.ToDisk:
+                var path = GetUnresolvedProviderPathFromPSPath(Path);
+                streamWriter = new StreamWriter(path);
+                writeLine = streamWriter.WriteLine;
+                break;
+
+            case ParameterSet.ToOutputStream:
+                writeLine = WriteObject;
+                break;
+        }
+
+        WriteDocumentation(Title, Description, CachedCommands, writeLine);
+
         if (ParameterSetName == ParameterSet.ToDisk)
-            StreamWriter.Close();
+            streamWriter.Close();
     }
 }
