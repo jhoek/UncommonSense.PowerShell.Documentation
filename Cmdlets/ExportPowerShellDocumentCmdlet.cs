@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Net.WebSockets;
 
 namespace UncommonSense.PowerShell.Documentation;
@@ -22,6 +23,8 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
     protected void WriteDocumentation(
         string title,
         string description,
+        IEnumerable<string> requirements,
+        IEnumerable<string> installationInstructions,
         IEnumerable<CommandInfo> commands,
         Action<string> writeLine
     )
@@ -33,6 +36,8 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 
         WriteTitle(title, writeLine);
         WriteDescription(description, writeLine);
+        WriteRequirements(requirements, writeLine);
+        WriteInstallationInstructions(installationInstructions, writeLine);
         WriteIndex(commands, writeLine);
         WriteCommands(commands, writeLine);
         WriteFooter(writeLine);
@@ -40,6 +45,7 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 
 
         // FIXME: List dependencies, installation instructions
+        // FIXME: versions, copyright
 
 
     }
@@ -60,6 +66,26 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
         }
     }
 
+    protected void WriteRequirements(IEnumerable<string> requirements, Action<string> writeLine)
+    {
+        if ((requirements ?? Array.Empty<string>()).Any())
+        {
+            writeLine.Invoke($"## Requirements");
+            requirements.ToList().ForEach(r => writeLine.Invoke(r));
+            writeLine.Invoke("");
+        }
+    }
+
+    protected void WriteInstallationInstructions(IEnumerable<string> installationRequirements, Action<string> writeLine)
+    {
+        if ((installationRequirements ?? Array.Empty<string>()).Any())
+        {
+            writeLine.Invoke($"## Installation Instructions");
+            installationRequirements.ToList().ForEach(r => writeLine.Invoke(r));
+            writeLine.Invoke("");
+        }
+    }
+
     protected void WriteIndex(IEnumerable<CommandInfo> commands, Action<string> writeLine)
     {
         var needsIndex = commands.Count() > 1;
@@ -72,18 +98,24 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 
     protected void WriteCommands(IEnumerable<CommandInfo> commands, Action<string> writeLine)
     {
-        commands.ToList().ForEach(c =>
-{
-    // FIXME: mention aliases for cmdlets
+        if (commands.Any())
+        {
+            writeLine.Invoke($"## Commands");
+            writeLine.Invoke("");
+        }
 
-    writeLine.Invoke($"<a name='{c.Name}'></a>");
-    writeLine.Invoke($"## {c.Name}");
-    writeLine.Invoke("");
-});
+        commands.ToList().ForEach(c =>
+        {
+            // FIXME: mention aliases for cmdlets
+
+            writeLine.Invoke($"<a name='{c.Name}'></a>");
+            writeLine.Invoke($"### {c.Name}");
+            writeLine.Invoke("");
+        });
     }
 
     protected void WriteFooter(Action<string> writeLine)
     {
-        writeLine.Invoke($"Generated {DateTime.Now.ToString()}");
+        writeLine.Invoke($"Generated {DateTime.Now.ToString("s")}");
     }
 }

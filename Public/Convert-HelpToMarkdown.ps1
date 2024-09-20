@@ -2,21 +2,6 @@
 {
     End
     {
-        $NoOfCommands = $CachedCommands.Length
-        $IndexRequired = $CachedCommands.Length -gt 1
-
-        # if ($Title)
-        # {
-        #     Write-Output "# $Title"
-        #     Write-Output ''
-        # }
-
-        if ($Description)
-        {
-            Write-Output $Description
-            Write-Output ''
-        }
-
         if ($PrefacePath)
         {
             Write-Output (Get-Content -Path $PrefacePath)

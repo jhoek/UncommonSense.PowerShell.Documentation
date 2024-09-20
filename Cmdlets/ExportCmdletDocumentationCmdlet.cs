@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace UncommonSense.PowerShell.Documentation;
 
 [Cmdlet(VerbsData.Export, Nouns.CmdletDocumentation, DefaultParameterSetName = ParameterSet.ToOutputStream)]
@@ -12,6 +14,12 @@ public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdl
 
     [Parameter()]
     public string Description { get; set; }
+
+    [Parameter()]
+    public string[] Requirement { get; set; }
+
+    [Parameter()]
+    public string[] InstallationInstruction { get; set; }
 
     [Parameter(Mandatory = true, ParameterSetName = ParameterSet.ToDisk)]
     public string Path { get; set; }
@@ -39,7 +47,14 @@ public class ExportCmdletDocumentationCmdlet : ExportPowerShellDocumentationCmdl
                 break;
         }
 
-        WriteDocumentation(Title, Description, CachedCommands, writeLine);
+        WriteDocumentation(
+            Title,
+            Description,
+            Requirement,
+            InstallationInstruction,
+            CachedCommands,
+            writeLine
+        );
 
         if (ParameterSetName == ParameterSet.ToDisk)
             streamWriter.Close();

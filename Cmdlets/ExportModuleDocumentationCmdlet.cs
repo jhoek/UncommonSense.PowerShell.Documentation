@@ -23,8 +23,9 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
                 {
                     case ParameterSet.ToDisk:
                         var directory = GetUnresolvedProviderPathFromPSPath(Directory);
-                        var fileName = Path.Combine(directory, m.Name);
-                        streamWriter = new StreamWriter(fileName);
+                        var fileName = $"{m.Name}.md";
+                        var filePath = Path.Combine(directory, fileName);
+                        streamWriter = new StreamWriter(filePath);
                         writeLine = streamWriter.WriteLine;
                         break;
 
@@ -36,6 +37,8 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
                 WriteDocumentation(
                     m.Name,
                     m.Description,
+                    m.RequiredModules.Select(m => m.Name),
+                    ["FIXME"],
                     m.ExportedCommands.Values,
                     writeLine
                 );
