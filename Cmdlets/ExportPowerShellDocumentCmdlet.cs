@@ -20,6 +20,8 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
         Action<string> writeLine
     )
     {
+        commands = commands.Where(c => c is CmdletInfo || c is FunctionInfo).OrderBy(c => c.Name);
+
         writeLine.Invoke($"# {title}");
         writeLine.Invoke("");
         writeLine.Invoke($"## Description");

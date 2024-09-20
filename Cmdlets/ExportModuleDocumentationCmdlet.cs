@@ -36,7 +36,7 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
                 WriteDocumentation(
                     m.Name,
                     m.Description,
-                    m.ExportedCmdlets.Values.Cast<CommandInfo>().Concat(m.ExportedFunctions.Values),
+                    m.ExportedCommands.Values,
                     writeLine
                 );
 
