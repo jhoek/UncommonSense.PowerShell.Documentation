@@ -6,18 +6,6 @@ namespace UncommonSense.PowerShell.Documentation;
 public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 {
     [Parameter()]
-    public string Preface { get; set; }
-
-    [Parameter()]
-    public string PrefacePath { get; set; }
-
-    [Parameter()]
-    public string Postface { get; set; }
-
-    [Parameter()]
-    public string PostfacePatch { get; set; }
-
-    [Parameter()]
     public SwitchParameter OmitIndex { get; set; }
 
     protected void WriteDocumentation(
@@ -44,7 +32,6 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 
 
 
-        // FIXME:  installation instructions
         // FIXME: versions, copyright
 
 
@@ -92,6 +79,31 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 
         if (needsIndex && !OmitIndex)
         {
+            writeLine.Invoke("## Index");
+            writeLine.Invoke("");
+            writeLine.Invoke("| Command | Synopsis |");
+            writeLine.Invoke("| ------- | -------- |");
+
+            /*
+
+s
+            $CurrentCommand = 0
+            foreach ($Command in $CachedCommands)
+            {
+                $CurrentCommand++
+
+                $HelpInfo = Get-Help $Command -Full
+                $LeftColumn = "[$($Command.Name)](#$($Command.Name))"
+                $RightColumn = "$(($HelpInfo.Synopsis | Out-String -Width 1200).Trim())" -replace '\n', ' '
+
+                Write-Output "| $LeftColumn | $RightColumn |"
+            }
+
+            Write-Output ''
+        }
+
+            */
+
             // FIXME: index
         }
     }

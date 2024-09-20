@@ -2,35 +2,6 @@
 {
     End
     {
-        if ($PrefacePath)
-        {
-            Write-Output (Get-Content -Path $PrefacePath)
-            Write-Output ''
-        }
-
-        if ($IndexRequired)
-        {
-            Write-Output '## Index'
-            Write-Output ''
-
-            Write-Output '| Command | Synopsis |'
-            Write-Output '| ------- | -------- |'
-
-            $CurrentCommand = 0
-            foreach ($Command in $CachedCommands)
-            {
-                $CurrentCommand++
-                Write-Progress -Activity $Activity -CurrentOperation 'Creating index' -PercentComplete ($CurrentCommand / $NoOfCommands * 100)
-
-                $HelpInfo = Get-Help $Command -Full
-                $LeftColumn = "[$($Command.Name)](#$($Command.Name))"
-                $RightColumn = "$(($HelpInfo.Synopsis | Out-String -Width 1200).Trim())" -replace '\n', ' '
-
-                Write-Output "| $LeftColumn | $RightColumn |"
-            }
-
-            Write-Output ''
-        }
 
         $CurrentCommand = 0
         foreach ($Command in $CachedCommands)
