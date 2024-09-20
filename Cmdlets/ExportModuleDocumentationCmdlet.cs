@@ -11,6 +11,9 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
     [ValidateNotNullOrEmpty()]
     public string Directory { get; set; } = ".";
 
+    [Parameter()]
+    public SwitchParameter OmitInstallationInstructions { get; set; }
+
     protected override void ProcessRecord() =>
         Module
             .ToList()
@@ -38,7 +41,7 @@ public class ExportModuleDocumentationCmdlet : ExportPowerShellDocumentationCmdl
                     m.Name,
                     m.Description,
                     m.RequiredModules.Select(m => m.Name),
-                    ["FIXME"],
+                    OmitInstallationInstructions ? [] : ["```powershell", $"Install-Module '{m.Name}'", "```"],
                     m.ExportedCommands.Values,
                     writeLine
                 );

@@ -44,7 +44,7 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
 
 
 
-        // FIXME: List dependencies, installation instructions
+        // FIXME:  installation instructions
         // FIXME: versions, copyright
 
 
@@ -76,12 +76,12 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
         }
     }
 
-    protected void WriteInstallationInstructions(IEnumerable<string> installationRequirements, Action<string> writeLine)
+    protected void WriteInstallationInstructions(IEnumerable<string> installationInstructions, Action<string> writeLine)
     {
-        if ((installationRequirements ?? Array.Empty<string>()).Any())
+        if (installationInstructions.Any())
         {
             writeLine.Invoke($"## Installation Instructions");
-            installationRequirements.ToList().ForEach(r => writeLine.Invoke(r));
+            installationInstructions.ToList().ForEach(i => writeLine.Invoke(i));
             writeLine.Invoke("");
         }
     }
