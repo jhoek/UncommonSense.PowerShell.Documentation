@@ -1,45 +1,5 @@
 ﻿function Convert-HelpToMarkDown
 {
-    [OutputType([string[]])]
-    Param
-    (
-        # The command or commands to include in the MarkDown file
-        [Parameter(Mandatory, ValueFromPipeLine)]
-        $Commands,
-
-        # The title for the MarkDown file
-        [string]
-        $Title,
-
-        # A description describing this group of commands, e.g. a short module description
-        [string]
-        $Description,
-
-        # The path of the preface file. This file will be included in the output before the actual command help
-        [ValidateScript( { Test-Path $_ } )]
-        [string]
-        $PrefacePath,
-
-        # The path of the postface file. This file will be included in the output after the actual command help
-        [ValidateScript( { Test-Path $_ } )]
-        [string]
-        $PostfacePath
-    )
-
-    Begin
-    {
-        # Add-Type -AssemblyName System.Web
-
-        $CachedCommands = @()
-        $Activity = 'Formatting help info as MarkDown'
-    }
-    Process
-    {
-        foreach ($Command in $Commands)
-        {
-            $CachedCommands += $Command
-        }
-    }
     End
     {
         $NoOfCommands = $CachedCommands.Length
