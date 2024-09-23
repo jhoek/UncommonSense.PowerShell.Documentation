@@ -8,6 +8,8 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
     [Parameter()]
     public SwitchParameter OmitIndex { get; set; }
 
+
+
     protected void WriteDocumentation(
         string title,
         string description,
@@ -17,22 +19,24 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
         Action<string> writeLine
     )
     {
-        commands =
+        var powershell = System.Management.Automation.PowerShell.Create();
+        var commandsWithHelp =
             commands
                 .Where(c => c is CmdletInfo || c is FunctionInfo)
-                .OrderBy(c => c.Name);
+                .ToDictionary(c => c, c => powershell.AddCommand("Get-Help").AddParameter("-Name", c.Name).AddParameter("-Full").Invoke().Single());
+
 
         WriteTitle(title, writeLine);
         WriteDescription(description, writeLine);
         WriteRequirements(requirements, writeLine);
         WriteInstallationInstructions(installationInstructions, writeLine);
-        WriteIndex(commands, writeLine);
+        WriteIndex(commandsWithHelp, writeLine);
         WriteCommands(commands, writeLine);
         WriteFooter(writeLine);
 
 
 
-        // FIXME: versions, copyright
+        // FIXME: versions
 
 
     }
@@ -73,21 +77,29 @@ public abstract class ExportPowerShellDocumentationCmdlet : PSCmdlet
         }
     }
 
-    protected void WriteIndex(IEnumerable<CommandInfo> commands, Action<string> writeLine)
+    protected void WriteIndex(Dictionary<CommandInfo, PSObject> commands, Action<string> writeLine)
     {
         var needsIndex = commands.Count() > 1;
 
         if (needsIndex && !OmitIndex)
         {
+            var powershell = System.Management.Automation.PowerShell.Create();
+
             writeLine.Invoke("## Index");
             writeLine.Invoke("");
             writeLine.Invoke("| Command | Synopsis |");
             writeLine.Invoke("| ------- | -------- |");
 
+            commands
+                .Keys
+                .Select(k => $"| {k.Name} | {commands[k].Properties["Synopsis"]} |")
+                .ToList()
+                .ForEach(c => writeLine.Invoke(c));
+
+
             /*
 
 s
-            $CurrentCommand = 0
             foreach ($Command in $CachedCommands)
             {
                 $CurrentCommand++
