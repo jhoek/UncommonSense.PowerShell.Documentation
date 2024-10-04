@@ -25,8 +25,11 @@ function Export-ModuleDocumentation
         Commands = $Module.ExportedCommands.Values | Where-Object { $_ -is [System.Management.Automation.FunctionInfo] -or $_ -is [System.Management.Automation.CmdletInfo] }
     }
 
+    $Requirements = ($Module.RequiredModules).Name + $Module.RequiredAssemblies
+
     if ($Module.Name) { $Parameters.Title = $Module.Name }
     if ($Module.Description) { $Parameters.Description = $Module.Description }
+    if ($Requirements) { $Parameters.Requirement = $Requirements }
     if ($PrefacePath) { $Parameters.PrefacePath = $PrefacePath }
     if ($PostfacePath) { $Parameters.PostfacePath = $PostfacePath }
 

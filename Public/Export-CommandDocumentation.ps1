@@ -12,26 +12,22 @@ function Export-CommandDocumentation
     Param
     (
         # The command or commands to include in the MarkDown file
-        [Parameter(Mandatory, ValueFromPipeLine)]
-        $Commands,
+        [Parameter(Mandatory, ValueFromPipeLine)]$Commands,
 
         # The title for the MarkDown file
-        [string]
-        $Title,
+        [string]$Title,
 
         # A description describing this group of commands, e.g. a short module description
-        [string]
-        $Description,
+        [string]$Description,
+
+        # External requirements, e.g. other modules that your module depends on
+        [string]$Requirement,
 
         # The path of the preface file. This file will be included in the output before the actual command help
-        [ValidateScript( { Test-Path $_ } )]
-        [string]
-        $PrefacePath,
+        [ValidateScript( { Test-Path $_ } )][string]$PrefacePath,
 
         # The path of the postface file. This file will be included in the output after the actual command help
-        [ValidateScript( { Test-Path $_ } )]
-        [string]
-        $PostfacePath
+        [ValidateScript( { Test-Path $_ } )][string]$PostfacePath
     )
 
     Begin
@@ -62,6 +58,13 @@ function Export-CommandDocumentation
         if ($Description)
         {
             Write-Output $Description
+            Write-Output ''
+        }
+
+        if ($Requirement)
+        {
+            Write-Output '## Requirements'
+            Write-Output ($Requirement | ForEach-Object { "- $_" })
             Write-Output ''
         }
 
