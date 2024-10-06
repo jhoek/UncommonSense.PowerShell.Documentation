@@ -5,32 +5,35 @@ Formats cmdlet help as MarkDown
 Get-Command -Module IDYN.NAV.Automation | Sort-Object -Property Verb | Convert-HelpToMarkDown -Title IDYN.NAV.Automation -Description 'PowerShell cmdlets for IDYN developers.' | clip
 Documents module IDYN.NAV.Automation, sorts the functions by verb name, adds a module title and description and copies the resulting text to the clipboard
 #>
-function Convert-HelpToMarkDown
+function Export-CommandDocumentation
 {
+    [Alias('Convert-HelpToMarkDown')]
     [OutputType([string[]])]
     Param
     (
         # The command or commands to include in the MarkDown file
-        [Parameter(Mandatory, ValueFromPipeLine)]
-        $Commands,
+        [Parameter(Mandatory, ValueFromPipeLine)]$Commands,
 
         # The title for the MarkDown file
-        [string]
-        $Title,
+        [string]$Title,
 
         # A description describing this group of commands, e.g. a short module description
-        [string]
-        $Description,
+        [string]$Description,
+
+        # A link to the module's license
+        [string]$LicenseUri,
+
+        # Copyright info the for the module
+        [string]$Copyright,
+
+        # External requirements, e.g. other modules that your module depends on
+        [string]$Requirement,
 
         # The path of the preface file. This file will be included in the output before the actual command help
-        [ValidateScript( { Test-Path $_ } )]
-        [string]
-        $PrefacePath,
+        [ValidateScript( { Test-Path $_ } )][string]$PrefacePath,
 
         # The path of the postface file. This file will be included in the output after the actual command help
-        [ValidateScript( { Test-Path $_ } )]
-        [string]
-        $PostfacePath
+        [ValidateScript( { Test-Path $_ } )][string]$PostfacePath
     )
 
     Begin
@@ -57,10 +60,17 @@ function Convert-HelpToMarkDown
             Write-Output "# $Title"
             Write-Output ''
         }
-        
+
         if ($Description)
         {
             Write-Output $Description
+            Write-Output ''
+        }
+
+        if ($Requirement)
+        {
+            Write-Output '## Requirements'
+            Write-Output ($Requirement | ForEach-Object { "- $_" })
             Write-Output ''
         }
 
@@ -74,7 +84,7 @@ function Convert-HelpToMarkDown
         {
             Write-Output '## Index'
             Write-Output ''
-            
+
             Write-Output '| Command | Synopsis |'
             Write-Output '| ------- | -------- |'
 
@@ -90,7 +100,7 @@ function Convert-HelpToMarkDown
 
                 Write-Output "| $LeftColumn | $RightColumn |"
             }
-            
+
             Write-Output ''
         }
 
@@ -101,7 +111,7 @@ function Convert-HelpToMarkDown
             Write-Progress -Activity $Activity -CurrentOperation $Command.Name -PercentComplete ($CurrentCommand / $NoOfCommands * 100)
 
             $HelpInfo = Get-Help $Command -Full
-            
+
             # Name
             Write-Output "<a name=`"$($Command.Name)`"></a>"
             Write-Output "## $($HelpInfo.Name)"
@@ -111,7 +121,7 @@ function Convert-HelpToMarkDown
             Write-Output ($HelpInfo.Synopsis | Out-String -Width 1200).Trim()
 
             # Description
-            if ($HelpInfo.Description) 
+            if ($HelpInfo.Description)
             {
                 Write-Output '### Description'
                 Write-Output ($HelpInfo.Description | Out-String -Width 1200).Trim()
@@ -155,7 +165,7 @@ function Convert-HelpToMarkDown
             }
 
             # Examples
-            if ($HelpInfo.Examples) 
+            if ($HelpInfo.Examples)
             # if ('Examples' -in $HelpInfo.PSObject.Properties.Name)
             {
                 Write-Output '### Examples'
@@ -168,11 +178,11 @@ function Convert-HelpToMarkDown
 
                     Write-Output $ExampleTitle
                     Write-Output ```````powershell
-               
+
                     if ($Example.Code)
                     {
                         Write-Output $Example.Code
-                        Write-output ''
+                        Write-Output ''
                     }
 
                     Write-Output ```````
@@ -188,6 +198,16 @@ function Convert-HelpToMarkDown
         if ($PostfacePath)
         {
             Write-Output (Get-Content -Path $PostfacePath)
+        }
+
+        if ($LicenseUri)
+        {
+            Write-Output "<div style='font-size:small'>License: $LicenseUri</div>"
+        }
+
+        if ($Copyright)
+        {
+            Write-Output "<div style='font-size:small'>$Copyright</div>"
         }
 
         Write-Output "<div style='font-size:small; color: #ccc'>Generated $(Get-Date -Format 'dd-MM-yyyy HH:mm')</div>"
