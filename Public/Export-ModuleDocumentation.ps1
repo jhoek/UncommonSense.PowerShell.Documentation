@@ -29,6 +29,8 @@ function Export-ModuleDocumentation
 
     if ($Module.Name) { $Parameters.Title = $Module.Name }
     if ($Module.Description) { $Parameters.Description = $Module.Description }
+    if ($Module.LicenseUri) { $Parameters.LicenseUri = $Module.LicenseUri}
+    if ($Module.Copyright) { $Parameters.Copyright = $Module.Copyright }
     if ($Requirements) { $Parameters.Requirement = $Requirements }
     if ($PrefacePath) { $Parameters.PrefacePath = $PrefacePath }
     if ($PostfacePath) { $Parameters.PostfacePath = $PostfacePath }

@@ -20,6 +20,12 @@ function Export-CommandDocumentation
         # A description describing this group of commands, e.g. a short module description
         [string]$Description,
 
+        # A link to the module's license
+        [string]$LicenseUri,
+
+        # Copyright info the for the module
+        [string]$Copyright,
+
         # External requirements, e.g. other modules that your module depends on
         [string]$Requirement,
 
@@ -192,6 +198,16 @@ function Export-CommandDocumentation
         if ($PostfacePath)
         {
             Write-Output (Get-Content -Path $PostfacePath)
+        }
+
+        if ($LicenseUri)
+        {
+            Write-Output "<div style='font-size:small'>License: $LicenseUri</div>"
+        }
+
+        if ($Copyright)
+        {
+            Write-Output "<div style='font-size:small'>$Copyright</div>"
         }
 
         Write-Output "<div style='font-size:small; color: #ccc'>Generated $(Get-Date -Format 'dd-MM-yyyy HH:mm')</div>"
