@@ -4,8 +4,9 @@
 
 code ~/Desktop/command.md
 
-$Module = Get-Module UncommonSense.Nrc -ListAvailable | Import-Module -PassThru
-Export-ModuleDocumentation -Module $Module
+Get-Module UncommonSense.Nrc -ListAvailable
+| Import-Module -PassThru
+| Export-ModuleDocumentation
 | Set-Content -Path ~/Desktop/module.md
 
 code ~/Desktop/module.md

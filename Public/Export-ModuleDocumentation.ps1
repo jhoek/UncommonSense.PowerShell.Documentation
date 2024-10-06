@@ -7,7 +7,7 @@ function Export-ModuleDocumentation
     [OutputType([string[]])]
     param
     (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [psmoduleinfo]$Module,
 
         # The path of the preface file. This file will be included in the output before the actual command help
@@ -21,19 +21,24 @@ function Export-ModuleDocumentation
         $PostfacePath
     )
 
-    $Parameters = @{
-        Commands = $Module.ExportedCommands.Values | Where-Object { $_ -is [System.Management.Automation.FunctionInfo] -or $_ -is [System.Management.Automation.CmdletInfo] }
+    process
+    {
+        $CurrentModule = $_
+
+        $Parameters = @{
+            Commands = $CurrentModule.ExportedCommands.Values | Where-Object { $_ -is [System.Management.Automation.FunctionInfo] -or $_ -is [System.Management.Automation.CmdletInfo] }
+        }
+
+        $Requirements = ($CurrentModule.RequiredModules).Name + $CurrentModule.RequiredAssemblies
+
+        if ($CurrentModule.Name) { $Parameters.Title = $CurrentModule.Name }
+        if ($CurrentModule.Description) { $Parameters.Description = $CurrentModule.Description }
+        if ($CurrentModule.LicenseUri) { $Parameters.LicenseUri = $CurrentModule.LicenseUri}
+        if ($CurrentModule.Copyright) { $Parameters.Copyright = $CurrentModule.Copyright }
+        if ($Requirements) { $Parameters.Requirement = $Requirements }
+        if ($PrefacePath) { $Parameters.PrefacePath = $PrefacePath }
+        if ($PostfacePath) { $Parameters.PostfacePath = $PostfacePath }
+
+        Export-CommandDocumentation @Parameters
     }
-
-    $Requirements = ($Module.RequiredModules).Name + $Module.RequiredAssemblies
-
-    if ($Module.Name) { $Parameters.Title = $Module.Name }
-    if ($Module.Description) { $Parameters.Description = $Module.Description }
-    if ($Module.LicenseUri) { $Parameters.LicenseUri = $Module.LicenseUri}
-    if ($Module.Copyright) { $Parameters.Copyright = $Module.Copyright }
-    if ($Requirements) { $Parameters.Requirement = $Requirements }
-    if ($PrefacePath) { $Parameters.PrefacePath = $PrefacePath }
-    if ($PostfacePath) { $Parameters.PostfacePath = $PostfacePath }
-
-    Export-CommandDocumentation @Parameters
 }
