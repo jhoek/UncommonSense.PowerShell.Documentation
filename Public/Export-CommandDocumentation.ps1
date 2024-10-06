@@ -149,7 +149,7 @@ function Export-CommandDocumentation
             }
 
             # Parameters
-            if ($HelpInfo.Parameters)
+            if ($HelpInfo.Parameters.Parameter)
             {
                 Write-Output '### Parameters'
                 foreach ($Parameter in $HelpInfo.Parameters.Parameter)
